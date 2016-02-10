@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>bitcraze_lps_estimator</name>
+  <version>0.0.1</version>
+  <description>Bitcraze UWB Local Positioning System position estimator</description>
+
+  <maintainer email="arnaud@bitcraze.se">Arnaud Taffanel</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="website">https://wiki.bitcraze.io/projects:lps:index</url>
+  <url type="bugtracker">https://github.com/bitcraze/lps_ros/issues</url>
+  <url type="repository">https://github.com/bitcraze/lps_ros</url>
+
+  <!-- The *_depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <!-- Examples: -->
+  <!-- Use test_depend for packages you need only for testing: -->
+  <!--   <test_depend>gtest</test_depend> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <run_depend>rospy</run_depend>
+
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
+
+  <run_depend>python-scipy</run_depend>
+  <run_depend>python-numpy</run_depend>
+</package>

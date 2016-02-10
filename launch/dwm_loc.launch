@@ -1,0 +1,25 @@
+<launch>
+  <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range" />
+  <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf" />
+  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz" />
+
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+        args="1 0 0 0 0 0 1 world lps 100" />
+
+  <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+    <param name="uri" value="$(arg uri)" />
+    <param name="tf_prefix" value="crazyflie" />
+    <rosparam>
+      genericLogTopics: ["log_ranges"]
+      genericLogTopicFrequencies: [100]
+      genericLogTopic_log_ranges_Variables: ["ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.distance6", "ranging.state"]
+    </rosparam>
+  </node>
+
+  <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch" />
+</launch>

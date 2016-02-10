@@ -1,0 +1,14 @@
+<launch>
+  <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+  <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf" />
+  <node name="zmq_range" pkg="bitcraze_lps_estimator" type="zmq_range" />
+  <node name="pos_zmq" pkg="bitcraze_lps_estimator" type="pos_zmq" />
+  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz" />
+
+  <node name="rviz" pkg="rviz" type="rviz"
+         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz" />
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+        args="1 0 0 0 0 0 1 world lps 100" />
+</launch>
