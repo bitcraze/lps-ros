@@ -1,9 +1,9 @@
 <launch>
   <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
-  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range" />
-  <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf" />
-  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz" />
+  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
+  <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf.py" />
+  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
 
   <node name="rviz" pkg="rviz" type="rviz"
         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz"/>
