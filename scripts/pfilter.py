@@ -23,127 +23,137 @@ import scipy
 import scipy.stats
 import random
 
+
 # ======== PARTICLE FILTER CLASS =========
 class ParticleFilter:
 
-	def __init__(self, num_particles=100, innovate=1.0, limits=[10,10,10] ):
-		self.Np = num_particles
-		self.innovation_cov = np.diag([innovate, innovate, innovate])
-		self.L_particles = np.zeros(num_particles)
-		self.aggregator = {}
-		self.xyz_limits = np.array(limits)
+    def __init__(self, num_particles=100, innovate=1.0, limits=[10, 10, 10]):
+        self.Np = num_particles
+        self.innovation_cov = np.diag([innovate, innovate, innovate])
+        self.L_particles = np.zeros(num_particles)
+        self.aggregator = {}
+        self.xyz_limits = np.array(limits)
 
-		# initialize particle positions & target estimate
-		self.xyz_particles = np.multiply( [np.random.uniform(0, 1, 3) for x in range(num_particles)], self.xyz_limits )
-		self.xyz_est = np.array( [limits[0]/2.0, limits[1]/2.0, limits[2]/2.0] )
+        # initialize particle positions & target estimate
+        self.xyz_particles = np.multiply(
+                [np.random.uniform(0, 1, 3) for x in range(num_particles)],
+                self.xyz_limits)
+        self.xyz_est = np.array([limits[0]/2.0, limits[1]/2.0, limits[2]/2.0])
 
-		# are we in the middle of an update?
-		self.updating = False
-		
-	def __del__(self):
-		pass
+        # are we in the middle of an update?
+        self.updating = False
 
-	def addRangeMeasurement(self, uid, xyz, dist, variance):
-		# updating mutex
-		if self.updating:
-			return
+    def __del__(self):
+        pass
 
-		# do we have a measurement from this node in the current period?
-		if uid not in self.aggregator:
-			# pos, estimate, variance, # samples
-			self.aggregator[uid] = [np.array(xyz), dist, variance, 1.0]
-			return
-		# otherwise add to the aggregator
-		self.aggregator[uid][0] += xyz
-		self.aggregator[uid][1] += dist
-		self.aggregator[uid][2] += variance
-		self.aggregator[uid][3] += 1.0
+    def addRangeMeasurement(self, uid, xyz, dist, variance):
+        # updating mutex
+        if self.updating:
+            return
 
-	def update(self):
-		# lock aggregator mutex
-		self.updating = True
+        # do we have a measurement from this node in the current period?
+        if uid not in self.aggregator:
+            # pos, estimate, variance, # samples
+            self.aggregator[uid] = [np.array(xyz), dist, variance, 1.0]
+            return
+        # otherwise add to the aggregator
+        self.aggregator[uid][0] += xyz
+        self.aggregator[uid][1] += dist
+        self.aggregator[uid][2] += variance
+        self.aggregator[uid][3] += 1.0
 
-		# if we don't have any new measurements, there's nothing to do here
-		if len(self.aggregator) == 0:
-			return
+    def update(self):
+        # lock aggregator mutex
+        self.updating = True
 
-		# summarize measurements for each observed uid
-		for uid in self.aggregator:
-			num_samples = self.aggregator[uid][3]
-			self.aggregator[uid][0]  = np.divide(self.aggregator[uid][0], num_samples)
-			self.aggregator[uid][1] /= num_samples
-			self.aggregator[uid][2] /= num_samples
+        # if we don't have any new measurements, there's nothing to do here
+        if len(self.aggregator) == 0:
+            return
 
-		for p in range(self.Np):
-			# add innovation noise
-			self.xyz_particles[p] += self.innovationNoise()
+        # summarize measurements for each observed uid
+        for uid in self.aggregator:
+            num_samples = self.aggregator[uid][3]
+            self.aggregator[uid][0] = np.divide(self.aggregator[uid][0],
+                                                num_samples)
+            self.aggregator[uid][1] /= num_samples
+            self.aggregator[uid][2] /= num_samples
 
-			# if the particle is out of bounds, give it zero likelihood
-			xyz = self.xyz_particles[p]
-			if any(xyz < [0,0,0]) or any(xyz > self.xyz_limits):
-				self.L_particles[p] = 0
-				continue
+        for p in range(self.Np):
+            # add innovation noise
+            self.xyz_particles[p] += self.innovationNoise()
 
-			# calculate new likelihood based on measurements since last update
-			L = 1.0
-			for uid in self.aggregator:
-				L *= self.getLikelihood(xyz, self.aggregator[uid])
+            # if the particle is out of bounds, give it zero likelihood
+            xyz = self.xyz_particles[p]
+            if any(xyz < [0, 0, 0]) or any(xyz > self.xyz_limits):
+                self.L_particles[p] = 0
+                continue
 
-			# append to likelihood array
-			self.L_particles[p] = L
+            # calculate new likelihood based on measurements since last update
+            L = 1.0
+            for uid in self.aggregator:
+                L *= self.getLikelihood(xyz, self.aggregator[uid])
 
-		# In case we got to a bad state where all particles have zero probability, restart PF
-		L_sum = np.sum(self.L_particles)
+            # append to likelihood array
+            self.L_particles[p] = L
 
-		if L_sum == 0:
-			print('Warning: PF in bad state, restarting')
-			self.xyz_particles = np.multiply( [np.random.uniform(0, 1, 3) for x in range(self.Np)], self.xyz_limits )
-			self.aggregator.clear()
-			return
+        # In case we got to a bad state where all particles have zero
+        # probability, restart PF
+        L_sum = np.sum(self.L_particles)
 
-		# normalize likelihoods to sum to 1. 
-		self.L_particles /= L_sum
+        if L_sum == 0:
+            print('Warning: PF in bad state, restarting')
+            self.xyz_particles = np.multiply(
+                    [np.random.uniform(0, 1, 3) for x in range(self.Np)],
+                    self.xyz_limits)
+            self.aggregator.clear()
+            return
 
-		# resample particles based on normalized probability density function
-		new_particle_idxs = np.random.choice(range(self.Np), self.Np, True, p=self.L_particles)
-		self.xyz_particles = self.xyz_particles[new_particle_idxs]
+        # normalize likelihoods to sum to 1.
+        self.L_particles /= L_sum
 
-		# get new position estimate via particle centroid (mean on axis 0)
-		self.xyz_est = np.mean(self.xyz_particles, 0)
+        # resample particles based on normalized probability density function
+        new_particle_idxs = np.random.choice(range(self.Np), self.Np, True,
+                                             p=self.L_particles)
+        self.xyz_particles = self.xyz_particles[new_particle_idxs]
 
-		# clear all the measurements we just used
-		self.aggregator.clear()
+        # get new position estimate via particle centroid (mean on axis 0)
+        self.xyz_est = np.mean(self.xyz_particles, 0)
 
-		# done updating
-		self.updating = False
+        # clear all the measurements we just used
+        self.aggregator.clear()
 
-		return self.xyz_est
+        # done updating
+        self.updating = False
 
-	def getLikelihood(self, xyz, meas):
-		# get distance between candidate and measurement point
-		meas_origin = meas[0]
-		meas_dist = meas[1]
-		meas_var = meas[2]
-		dist = np.linalg.norm(xyz - meas_origin)
-		#print('var = ', meas_var, 'dist = ', dist - meas_dist, 'L = ', scipy.stats.norm.pdf( dist, meas_dist, meas_var))
+        return self.xyz_est
 
-		# scipy below takes about 80.3 us to complete
-		#return scipy.stats.norm.pdf( dist, meas_dist, meas_var)
+    def getLikelihood(self, xyz, meas):
+        # get distance between candidate and measurement point
+        meas_origin = meas[0]
+        meas_dist = meas[1]
+        meas_var = meas[2]
+        dist = np.linalg.norm(xyz - meas_origin)
+        # print('var = ', meas_var, 'dist = ', dist - meas_dist, 'L = ',
+        #      scipy.stats.norm.pdf(dist, meas_dist, meas_var))
 
-		# basic likelihood written below only takes around 3.5 us
-		return (1.0/(meas_var*np.sqrt(2.0*np.pi))) * np.exp( (-(meas_dist - dist)**2)/(2.0*meas_var**2))
+        # scipy below takes about 80.3 us to complete
+        # return scipy.stats.norm.pdf( dist, meas_dist, meas_var)
 
-	def getEstimate(self):
-		return self.xyz_est
+        # basic likelihood written below only takes around 3.5 us
+        return (1.0 / (meas_var * np.sqrt(2.0 * np.pi))) * np.exp(
+            (-(meas_dist - dist) ** 2) / (2.0 * meas_var ** 2))
 
-	def getParticles(self):
-		return self.xyz_particles
+    def getEstimate(self):
+        return self.xyz_est
 
-	def innovationNoise(self):
-		return np.random.multivariate_normal([0,0,0] ,self.innovation_cov)
+    def getParticles(self):
+        return self.xyz_particles
+
+    def innovationNoise(self):
+        return np.random.multivariate_normal([0, 0, 0], self.innovation_cov)
 
 
 # test particle filter standalone
 if __name__ == '__main__':
-	estimator = ParticleFilter(100, 2, (10,10,10))
-	print(estimator.innovationNoise())
+    estimator = ParticleFilter(100, 2, (10, 10, 10))
+    print(estimator.innovationNoise())

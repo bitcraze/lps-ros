@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
         valid = [False] * 8
         for i in range(8):
-            valid[i] = (ranging_json["state"] & (1<<i)) != 0
+            valid[i] = (ranging_json["state"] & (1 << i)) != 0
 
         ranging.valid = valid
 
