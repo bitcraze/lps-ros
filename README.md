@@ -1,4 +1,4 @@
-# Bitcraze UWB LPS position estimator ROS package
+# Bitcraze UWB LPS position estimator ROS package [![Build Status](https://api.travis-ci.org/bitcraze/lps-ros.svg)](https://travis-ci.org/bitcraze/lps-ros)
 
 This ROS package contains the Particle filter, launch files and bridges used
 to estimate the Bitcraze Crazyflie 2.0 position with using the LPS UWB ranging
