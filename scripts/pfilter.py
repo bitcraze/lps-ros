@@ -19,9 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # ----- IMPORTS -----
 import numpy as np
-import scipy
-import scipy.stats
-import random
 
 
 # ======== PARTICLE FILTER CLASS =========
@@ -36,8 +33,8 @@ class ParticleFilter:
 
         # initialize particle positions & target estimate
         self.xyz_particles = np.multiply(
-                [np.random.uniform(0, 1, 3) for x in range(num_particles)],
-                self.xyz_limits)
+            [np.random.uniform(0, 1, 3) for x in range(num_particles)],
+            self.xyz_limits)
         self.xyz_est = np.array([limits[0]/2.0, limits[1]/2.0, limits[2]/2.0])
 
         # are we in the middle of an update?
@@ -103,8 +100,8 @@ class ParticleFilter:
         if L_sum == 0:
             print('Warning: PF in bad state, restarting')
             self.xyz_particles = np.multiply(
-                    [np.random.uniform(0, 1, 3) for x in range(self.Np)],
-                    self.xyz_limits)
+                [np.random.uniform(0, 1, 3) for x in range(self.Np)],
+                self.xyz_limits)
             self.aggregator.clear()
             return
 

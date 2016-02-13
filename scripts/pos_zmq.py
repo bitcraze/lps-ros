@@ -9,7 +9,7 @@ import zmq
 
 def callback(data):
     pos_socket.send_json(
-            {"pos": [data.x, data.y, data.z], "angle": 0, "detect": True})
+        {"pos": [data.x, data.y, data.z], "angle": 0, "detect": True})
 
 if __name__ == "__main__":
     rospy.init_node('pos_zmq')
