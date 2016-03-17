@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="uri" default="radio://0/100/2M/E7E7E7E7E7" />
+  <arg name="frame" default="base_link" />
+  <arg name="joy_dev" default="/dev/input/js0" />
+  <arg name="x" default="0" />
+  <arg name="y" default="0" />
+  <arg name="z" default="0.5" />
+
+  <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
+  <node name="lps_lms" pkg="bitcraze_lps_estimator" type="lps_lms.py" />
+  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz"/>
+
+
+  <group ns="crazyflie">
+    <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+      <param name="uri" value="$(arg uri)" />
+      <param name="tf_prefix" value="crazyflie" />
+      <rosparam>
+        genericLogTopics: ["log_ranges"]
+        genericLogTopicFrequencies: [30]
+        genericLogTopic_log_ranges_Variables: ["ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.distance6", "ranging.state"]
+      </rosparam>
+    </node>
+
+    <node name="joy" pkg="joy" type="joy_node" output="screen">
+      <param name="dev" value="$(arg joy_dev)" />
+    </node>
+
+    <node name="joystick_controller" pkg="crazyflie_demo" type="controller.py" output="screen">
+      <param name="use_crazyflie_controller" value="True" />
+    </node>
+
+    <include file="$(find crazyflie_controller)/launch/crazyflie2.launch">
+      <arg name="frame" value="$(arg frame)" />
+    </include>
+
+    <node name="pose" pkg="crazyflie_demo" type="publish_pose.py" output="screen">
+      <param name="name" value="goal" />
+      <param name="rate" value="30" />
+      <param name="x" value="$(arg x)" />
+      <param name="y" value="$(arg y)" />
+      <param name="z" value="$(arg z)" />
+    </node>
+
+  </group>
+
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster"
+        args="1 0 0 0 0 0 1 world lps 100" />
+
+  <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch" />
+</launch>

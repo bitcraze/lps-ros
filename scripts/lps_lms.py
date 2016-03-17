@@ -11,7 +11,6 @@ from anchorpos import get_anchors_pos
 
 import numpy as np
 from scipy.stats import norm
-from scipy.optimize import minimize
 import math
 
 bias = np.array([
@@ -44,12 +43,28 @@ def func_der(p, data):
             result = result + (p - anchor_positions[anchor]) * (1 - (data.ranges[anchor] - bias[anchor])/np.linalg.norm(anchor_positions[anchor] - p))
     return result
 
+# This is a simple gradient algorithm with a fixed number of steps
+# This makes it more usable for real-time systems and we expect the result
+# to be in the local neighborhood since we call this function frequently
+def gradient_descent(guess, data, step_size, max_iter):
+    x = guess
+    for i in range(0, max_iter):
+        x = x - step_size * func_der(x, data)
+    return x
+
 
 def callback(data):
     # optimize cost function, initialized with our last estimate
     global last_estimate
-    res = minimize(func, last_estimate, args=(data), jac=func_der)
-    estimate = res.x
+    res = gradient_descent(last_estimate, data, 0.1, 10)
+    estimate = res
+    # filter data since we know that the CF can't have moved too much
+    # Instead, just move into the correct direction by a fixed amount
+    distance = np.linalg.norm(estimate - last_estimate)
+    if distance > 0.05:
+        estimate = last_estimate + (estimate - last_estimate) / distance * 0.05
+
+
     pt = Point()
     pt.x = estimate[0]
     pt.y = estimate[1]
@@ -74,6 +89,6 @@ if __name__ == "__main__":
     position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
 
 
-    rospy.Subscriber("ranging", RangeArray, callback)
+    rospy.Subscriber("/ranging", RangeArray, callback)
 
     rospy.spin()
