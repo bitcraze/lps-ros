@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""This script approximates the position of the crazyflie using least-means-square (LMS)
+"""This script approximates the position of the Crazyflie using
+least-means-square (LMS)
 """
 
 import rospy
@@ -20,28 +21,34 @@ bias = np.array([
     -0.261,
     -0.187,
     -0.201
-    ])
+])
 
-last_estimate = np.array([0,0,0])
+last_estimate = np.array([0, 0, 0])
+
 
 def func(p, data):
-    """Here we compute our cost function: 1/2 * \sum_i (||x_i - p|| - d_i)^2, i.e. the sum
-    of the difference between anchors Crazyflie
+    """Here we compute our cost function: 1/2 * \sum_i (||x_i - p|| - d_i)^2,
+    i.e. the sum of the difference between anchors Crazyflie
     """
     result = 0
     for anchor in anchor_positions:
         if data.valid[anchor]:
-            result = result + math.pow(np.linalg.norm(anchor_positions[anchor] - p) - (data.ranges[anchor] - bias[anchor]), 2)
+            result += math.pow(np.linalg.norm(anchor_positions[anchor] - p) - (
+                data.ranges[anchor] - bias[anchor]), 2)
     return result * 0.5
+
 
 def func_der(p, data):
     """This is the derivative of our cost function.
     """
-    result = np.array([0,0,0])
+    result = np.array([0, 0, 0])
     for anchor in anchor_positions:
         if data.valid[anchor]:
-            result = result + (p - anchor_positions[anchor]) * (1 - (data.ranges[anchor] - bias[anchor])/np.linalg.norm(anchor_positions[anchor] - p))
+            result += (p - anchor_positions[anchor]) * (
+                1 - (data.ranges[anchor] - bias[anchor]) /
+                np.linalg.norm(anchor_positions[anchor] - p))
     return result
+
 
 # This is a simple gradient algorithm with a fixed number of steps
 # This makes it more usable for real-time systems and we expect the result
@@ -64,7 +71,6 @@ def callback(data):
     if distance > 0.05:
         estimate = last_estimate + (estimate - last_estimate) / distance * 0.05
 
-
     pt = Point()
     pt.x = estimate[0]
     pt.y = estimate[1]
@@ -81,13 +87,13 @@ def callback(data):
 
     last_estimate = estimate
 
+
 if __name__ == "__main__":
     rospy.init_node('dwm_lms')
 
     anchor_positions = get_anchors_pos()
 
     position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
-
 
     rospy.Subscriber("/ranging", RangeArray, callback)
 
