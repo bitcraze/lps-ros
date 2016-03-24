@@ -12,10 +12,10 @@ import pfilter
 def callback(data):
     nvalid = 0
     for anchor in anchor_positions:
-        if data.valid[anchor] and data.ranges[anchor]>0:
+        if data.valid[anchor] and data.ranges[anchor] > 0:
             pf.addRangeMeasurement(anchor, anchor_positions[anchor],
                                    data.ranges[anchor], 0.3)
-	    nvalid += 1
+        nvalid += 1
 
     if nvalid >= 4:
         pf.update()
