@@ -65,6 +65,7 @@ class ParticleFilter:
 
         # if we don't have any new measurements, there's nothing to do here
         if len(self.aggregator) == 0:
+            self.updating = False
             return
 
         # summarize measurements for each observed uid
