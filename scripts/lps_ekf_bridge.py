@@ -29,7 +29,7 @@ def callback(data):
 if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
 
-    position_pub = rospy.Publisher("/crazyflie_position", Point, queue_size=10)
+    position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
 
     rospy.Subscriber("log_kfpos", GenericLogData, callback)
 

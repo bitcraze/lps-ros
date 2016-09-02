@@ -3,26 +3,27 @@
   <arg name="uri" default="radio://0/100/2M/E7E7E7E7E7" />
   <arg name="frame" default="base_link" />
   <arg name="joy_dev" default="/dev/input/js0" />
-  <arg name="x" default="0" />
-  <arg name="y" default="0" />
-  <arg name="z" default="0.5" />
+  <arg name="x" default="2.8" />
+  <arg name="y" default="2.3" />
+  <arg name="z" default="1" />
 
-  <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
-
-  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
 
   <node name="rviz" pkg="rviz" type="rviz"
         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_with_goal.rviz"/>
 
 
   <group ns="crazyflie">
+    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
       <param name="uri" value="$(arg uri)" />
       <param name="tf_prefix" value="crazyflie" />
       <rosparam>
-        genericLogTopics: ["log_kfpos"]
-        genericLogTopicFrequencies: [30]
+        genericLogTopics: ["log_kfpos", "log_ranges"]
+        genericLogTopicFrequencies: [30, 30]
         genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_ranges_Variables: ["ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.distance6", "ranging.state"]
       </rosparam>
     </node>
 
@@ -45,6 +46,8 @@
     </node>
 
     <node name="lps_efk_bridge" pkg="bitcraze_lps_estimator" type="lps_ekf_bridge.py" output="screen"/>
+
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
 
   </group>
 

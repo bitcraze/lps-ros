@@ -48,17 +48,9 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /crazyflie/anchors_markers
-      Name: MarkerArray
-      Namespaces:
-        "": true
-      Queue Size: 100
-      Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /crazyflie/crazyflie_marker
+      Marker Topic: /crazyflie0/crazyflie_marker
       Name: Marker
       Namespaces:
         "": true
@@ -76,8 +68,39 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.0500000007
       Shape: Arrow
-      Topic: /crazyflie/goal
+      Topic: /crazyflie0/goal
       Unreliable: false
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /crazyflie1/crazyflie_marker
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.100000001
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.300000012
+      Head Radius: 0.100000001
+      Name: Pose
+      Shaft Length: 1
+      Shaft Radius: 0.0500000007
+      Shape: Arrow
+      Topic: /crazyflie1/goal
+      Unreliable: false
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /crazyflie0/anchors_markers
+      Name: MarkerArray
+      Namespaces:
+        "": true
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:
@@ -136,5 +159,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1200
-  X: 174
-  Y: 26
+  X: 123
+  Y: 24
