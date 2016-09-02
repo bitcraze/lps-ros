@@ -9,6 +9,7 @@
 
   <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
 
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find crazyflie_description)/urdf/crazyflie2.urdf.xacro" />
   <node name="rviz" pkg="rviz" type="rviz"
         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_with_goal.rviz"/>
 

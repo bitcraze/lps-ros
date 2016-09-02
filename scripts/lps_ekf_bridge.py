@@ -23,7 +23,7 @@ def callback(data):
     br.sendTransform((pt.x, pt.y, pt.z),
                      tf.transformations.quaternion_from_euler(0, 0, 0),
                      rospy.Time.now(),
-                     "base_link",
+                     rospy.get_namespace() + "base_link",
                      "world")
 
 if __name__ == "__main__":
