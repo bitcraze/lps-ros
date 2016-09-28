@@ -24,6 +24,9 @@ class ControllerBridge:
         self.landing = False
         self.transient_height = 0
 
+        self.assisted_takeoff = rospy.get_param("~assisted_takeoff", True)
+        self.assisted_landing = rospy.get_param("~assisted_landing", True)
+
         self.goal_sub = rospy.Subscriber("goal", PoseStamped, self.new_goal)
         self.cmd_vel_pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
 
@@ -79,16 +82,24 @@ class ControllerBridge:
     def takeoff(self, req):
         rospy.set_param("flightmode/posSet", 1)
         self._update_params(["flightmode/posSet"])
-        if self.landing or (not self.flying):
+        if self.landing or (not self.flying) and self.assisted_takeoff:
             self.flying = True
             self.taking_off = True
+            self.landing = False
+        elif not self.assisted_takeoff:
+            self.flying = True
+            self.taking_off = False
             self.landing = False
         return ()
 
     def land(self, req):
-        if self.flying:
+        if self.flying and self.assisted_landing:
             self.taking_off = False
             self.landing = True
+        elif not self.assisted_landing:
+            self.flying = False
+            self.taking_off = False
+            self.landing = False
         self.transient_height = self.target_setpoint.linear.z/1000.0
         return ()
 
