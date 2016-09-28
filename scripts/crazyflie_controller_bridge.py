@@ -73,7 +73,7 @@ class ControllerBridge:
     def new_goal(self, goal):
         self.target_setpoint.linear.x = goal.pose.position.x
         self.target_setpoint.linear.y = goal.pose.position.y
-        if goal.pose.position.z >= 0:
+        if goal.pose.position.z > 0:
             self.target_setpoint.linear.z = goal.pose.position.z*1000
         else:
             self.target_setpoint.linear.z = 1
