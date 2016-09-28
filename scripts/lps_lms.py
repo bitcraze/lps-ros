@@ -11,7 +11,6 @@ import tf
 from anchorpos import get_anchors_pos
 
 import numpy as np
-from scipy.stats import norm
 import math
 
 bias = np.array([
