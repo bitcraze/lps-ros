@@ -85,7 +85,7 @@ class ControllerBridge:
 
     def takeoff(self, req):
 
-        if self.reconnect_on_takeoff:
+        if self.reconnect_on_takeoff and not self.flying:
             self._reconnect()
             time.sleep(2)
 
