@@ -8,10 +8,11 @@ import rospy
 from geometry_msgs.msg import PoseStamped, Twist
 from std_srvs.srv import Empty
 from crazyflie_driver.srv import UpdateParams
+import time
 
 # Takeoff and landing speed in ms^-1
-TAKEOFF_SPEED = 0.5
-LANDING_SPEED = 0.3
+TAKEOFF_SPEED = 1.0
+LANDING_SPEED = 0.5
 UPDATE_RATE = 30
 
 
@@ -26,6 +27,7 @@ class ControllerBridge:
 
         self.assisted_takeoff = rospy.get_param("~assisted_takeoff", True)
         self.assisted_landing = rospy.get_param("~assisted_landing", True)
+        self.reconnect_on_takeoff = rospy.get_param("~reconnect_on_takeoff", False)
 
         self.goal_sub = rospy.Subscriber("goal", PoseStamped, self.new_goal)
         self.cmd_vel_pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
@@ -34,6 +36,8 @@ class ControllerBridge:
         self.ts = rospy.Service('takeoff', Empty, self.takeoff)
         self.ls = rospy.Service('land', Empty, self.land)
         self._update_params = rospy.ServiceProxy('update_params', UpdateParams)
+        if self.reconnect_on_takeoff:
+            self._reconnect = rospy.ServiceProxy('reconnect', Empty)
 
         # Send position setpoints 30 times per seconds
         self.timer = rospy.Timer(rospy.Duration(1.0/UPDATE_RATE),
@@ -80,6 +84,11 @@ class ControllerBridge:
             rospy.logwarn("Cannot set <=0 Z setpoint!")
 
     def takeoff(self, req):
+
+        if self.reconnect_on_takeoff:
+            self._reconnect()
+            time.sleep(2)
+
         rospy.set_param("flightmode/posSet", 1)
         self._update_params(["flightmode/posSet"])
         if self.landing or (not self.flying) and self.assisted_takeoff:
@@ -93,14 +102,15 @@ class ControllerBridge:
         return ()
 
     def land(self, req):
-        if self.flying and self.assisted_landing:
+        if self.flying and self.assisted_landing and not self.landing:
             self.taking_off = False
             self.landing = True
+            self.transient_height = self.target_setpoint.linear.z/1000.0
         elif not self.assisted_landing:
             self.flying = False
             self.taking_off = False
             self.landing = False
-        self.transient_height = self.target_setpoint.linear.z/1000.0
+
         return ()
 
 if __name__ == "__main__":
