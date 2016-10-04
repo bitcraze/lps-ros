@@ -27,7 +27,8 @@ class ControllerBridge:
 
         self.assisted_takeoff = rospy.get_param("~assisted_takeoff", True)
         self.assisted_landing = rospy.get_param("~assisted_landing", True)
-        self.reconnect_on_takeoff = rospy.get_param("~reconnect_on_takeoff", False)
+        self.reconnect_on_takeoff = rospy.get_param("~reconnect_on_takeoff",
+                                                    False)
 
         self.goal_sub = rospy.Subscriber("goal", PoseStamped, self.new_goal)
         self.cmd_vel_pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
