@@ -5,6 +5,7 @@
 
 import rospy
 from geometry_msgs.msg import Point
+from crazyflie_driver.srv import UpdateParams
 
 import tf
 
@@ -28,6 +29,22 @@ def callback(data):
 
 if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
+
+    # Set anchor position according to the position setup in ROS
+    rospy.wait_for_service('update_params')
+    update_params = rospy.ServiceProxy('update_params', UpdateParams)
+
+    rospy.loginfo("Setting anchor position ...")
+
+    n_anchors = rospy.get_param("n_anchors")
+    for i in range(n_anchors):
+        position = rospy.get_param("anchor{}_pos".format(i))
+        rospy.loginfo("Anchor {} at {}".format(i, position))
+        name = "anchorpos/anchor{}".format(i)
+        rospy.set_param(name + "x", position[0])
+        rospy.set_param(name + "y", position[1])
+        rospy.set_param(name + "z", position[2])
+        update_params([name + 'x', name + 'y', name + 'z'])
 
     position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
 
