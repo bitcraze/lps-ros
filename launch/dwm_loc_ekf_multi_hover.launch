@@ -26,9 +26,10 @@
       <param name="uri" value="$(arg uri0)" />
       <param name="tf_prefix" value="crazyflie0" />
       <rosparam>
-        genericLogTopics: ["log_kfpos"]
-        genericLogTopicFrequencies: [30]
+        genericLogTopics: ["log_kfpos", "log_kfqt"]
+        genericLogTopicFrequencies: [30, 30]
         genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
       </rosparam>
     </node>
 
@@ -65,9 +66,10 @@
       <param name="uri" value="$(arg uri1)" />
       <param name="tf_prefix" value="crazyflie1" />
       <rosparam>
-        genericLogTopics: ["log_kfpos"]
-        genericLogTopicFrequencies: [30]
+        genericLogTopics: ["log_kfpos", "log_kfqt"]
+        genericLogTopicFrequencies: [30, 30]
         genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
       </rosparam>
     </node>
 

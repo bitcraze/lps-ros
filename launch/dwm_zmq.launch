@@ -1,10 +1,12 @@
 <launch>
   <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
-  <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf.py" />
-  <node name="zmq_range" pkg="bitcraze_lps_estimator" type="zmq_range.py" />
-  <node name="pos_zmq" pkg="bitcraze_lps_estimator" type="pos_zmq.py" />
-  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz" />
+  <group ns="crazyflie">
+    <node name="lps_pf" pkg="bitcraze_lps_estimator" type="lps_pf.py" />
+    <node name="zmq_range" pkg="bitcraze_lps_estimator" type="zmq_range.py" />
+    <node name="pos_zmq" pkg="bitcraze_lps_estimator" type="pos_zmq.py" />
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz" />
+  </group>
 
   <node name="rviz" pkg="rviz" type="rviz"
          args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz" />

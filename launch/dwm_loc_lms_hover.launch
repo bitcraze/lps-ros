@@ -9,10 +9,6 @@
 
   <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
-  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
-  <node name="lps_lms" pkg="bitcraze_lps_estimator" type="lps_lms.py" />
-  <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
-
   <node name="rviz" pkg="rviz" type="rviz"
         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig.rviz"/>
 
@@ -47,6 +43,10 @@
       <param name="y" value="$(arg y)" />
       <param name="z" value="$(arg z)" />
     </node>
+
+    <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
+    <node name="lps_lms" pkg="bitcraze_lps_estimator" type="lps_lms.py" />
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
 
   </group>
 
