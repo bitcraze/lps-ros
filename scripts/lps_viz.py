@@ -80,12 +80,12 @@ if __name__ == "__main__":
 
     anchors_pub = rospy.Publisher("anchors_markers", MarkerArray, queue_size=1,
                                   latch=True)
-    tag_pub = rospy.Publisher("crazyflie_marker", Marker, queue_size=1,
+    tag_pub = rospy.Publisher(rospy.get_namespace()+"marker", Marker, queue_size=1,
                               latch=True)
 
-    rospy.Subscriber("crazyflie_position", Point, callback)
+    rospy.Subscriber(rospy.get_namespace()+"position", Point, callback)
 
     publish_anchors(anchors_pub, anchors_positions)
-    publish_copter(tag_pub, [0.3, 1.1, 0.4])
+    publish_copter(tag_pub, [0, 0, 0])
 
     rospy.spin()
