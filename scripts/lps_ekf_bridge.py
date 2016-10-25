@@ -46,6 +46,10 @@ if __name__ == "__main__":
         rospy.set_param(name + "z", position[2])
         update_params([name + 'x', name + 'y', name + 'z'])
 
+    if rospy.has_param("anchorpos/enable"):
+        rospy.set_param("anchorpos/enable", 1)
+        update_params(["anchorpos/enable"])
+
     position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
 
     rospy.Subscriber("log_kfpos", GenericLogData, callback)
