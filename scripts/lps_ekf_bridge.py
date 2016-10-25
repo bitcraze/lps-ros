@@ -21,6 +21,7 @@ ps.pose.position.x = 0
 ps.pose.position.y = 0
 ps.pose.position.z = 0
 
+
 def callback_pos(data):
     ps.pose.position.x = data.values[0]
     ps.pose.position.y = data.values[1]
@@ -31,12 +32,13 @@ def callback_pos(data):
     pose_pub.publish(ps)
 
     br = tf.TransformBroadcaster()
-    br.sendTransform((ps.pose.position.x, ps.pose.position.y, ps.pose.position.z),
-                     (ps.pose.orientation.x, ps.pose.orientation.y,
-                         ps.pose.orientation.z, ps.pose.orientation.w),
-                     rospy.Time.now(),
-                     rospy.get_namespace() + "base_link",
-                     "world")
+    br.sendTransform(
+            (ps.pose.position.x, ps.pose.position.y, ps.pose.position.z),
+            (ps.pose.orientation.x, ps.pose.orientation.y,
+                ps.pose.orientation.z, ps.pose.orientation.w),
+            rospy.Time.now(),
+            rospy.get_namespace() + "base_link",
+            "world")
 
     point = Point()
     point = ps.pose.position
@@ -51,8 +53,10 @@ def callback_qt(data):
 if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
 
-    pose_pub = rospy.Publisher(rospy.get_namespace() + "pose", PoseStamped, queue_size=10)
-    position_pub = rospy.Publisher(rospy.get_namespace() + "position", Point, queue_size=10)
+    pose_pub = rospy.Publisher(rospy.get_namespace() + "pose",
+            PoseStamped, queue_size=10)
+    position_pub = rospy.Publisher(rospy.get_namespace() + "position",
+            Point, queue_size=10)
 
     # Set anchor position according to the position setup in ROS
     rospy.wait_for_service('update_params')
@@ -62,9 +66,9 @@ if __name__ == "__main__":
 
     n_anchors = rospy.get_param("n_anchors")
     for i in range(n_anchors):
-        position = rospy.get_param("anchor{}_pos".format(i))
+        position = rospy.get_param(rospy.get_namespace()+"anchor{}_pos".format(i))
         rospy.loginfo("Anchor {} at {}".format(i, position))
-        name = "anchorpos/anchor{}".format(i)
+        name = rospy.get_namespace()+"anchorpos/anchor{}".format(i)
         rospy.set_param(name + "x", position[0])
         rospy.set_param(name + "y", position[1])
         rospy.set_param(name + "z", position[2])

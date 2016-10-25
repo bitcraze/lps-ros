@@ -78,10 +78,10 @@ if __name__ == "__main__":
 
     anchors_positions = get_anchors_pos()
 
-    anchors_pub = rospy.Publisher("anchors_markers", MarkerArray, queue_size=1,
-                                  latch=True)
-    tag_pub = rospy.Publisher(rospy.get_namespace()+"marker", Marker, queue_size=1,
-                              latch=True)
+    anchors_pub = rospy.Publisher("anchors_markers",
+            MarkerArray, queue_size=1, latch=True)
+    tag_pub = rospy.Publisher(rospy.get_namespace()+"marker",
+            Marker, queue_size=1, latch=True)
 
     rospy.Subscriber(rospy.get_namespace()+"position", Point, callback)
 
