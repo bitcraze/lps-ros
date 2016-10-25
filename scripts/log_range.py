@@ -26,6 +26,6 @@ if __name__ == "__main__":
     ranging_pub = rospy.Publisher("ranging", RangeArray, queue_size=10)
 
     rospy.Subscriber(rospy.get_namespace()+"log_ranges",
-            GenericLogData, callback)
+                     GenericLogData, callback)
 
     rospy.spin()

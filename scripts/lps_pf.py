@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     pf = pfilter.ParticleFilter(200, 0.1, (10, 10, 2))
     position_pub = rospy.Publisher(rospy.get_namespace()+"position",
-            Point, queue_size=10)
+                                   Point, queue_size=10)
 
     rospy.Subscriber("ranging", RangeArray, callback)
 

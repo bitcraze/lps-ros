@@ -44,6 +44,7 @@ def callback_pos(data):
     point = ps.pose.position
     position_pub.publish(point)
 
+
 def callback_qt(data):
     ps.pose.orientation.w = data.values[0]
     ps.pose.orientation.x = data.values[1]
@@ -54,9 +55,9 @@ if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
 
     pose_pub = rospy.Publisher(rospy.get_namespace() + "pose",
-            PoseStamped, queue_size=10)
+                               PoseStamped, queue_size=10)
     position_pub = rospy.Publisher(rospy.get_namespace() + "position",
-            Point, queue_size=10)
+                                   Point, queue_size=10)
 
     # Set anchor position according to the position setup in ROS
     rospy.wait_for_service('update_params')
@@ -66,7 +67,8 @@ if __name__ == "__main__":
 
     n_anchors = rospy.get_param("n_anchors")
     for i in range(n_anchors):
-        position = rospy.get_param(rospy.get_namespace()+"anchor{}_pos".format(i))
+        position = rospy.get_param(rospy.get_namespace() +
+                                   "anchor{}_pos".format(i))
         rospy.loginfo("Anchor {} at {}".format(i, position))
         name = rospy.get_namespace()+"anchorpos/anchor{}".format(i)
         rospy.set_param(name + "x", position[0])
