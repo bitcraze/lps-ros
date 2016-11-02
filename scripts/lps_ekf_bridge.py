@@ -78,5 +78,10 @@ if __name__ == "__main__":
 
     rospy.Subscriber("log_kfpos", GenericLogData, callback_pos)
     rospy.Subscriber("log_kfqt", GenericLogData, callback_qt)
+    if rospy.has_param("anchorpos/enable"):
+        rospy.set_param("anchorpos/enable", 1)
+        update_params(["anchorpos/enable"])
+
+    position_pub = rospy.Publisher("crazyflie_position", Point, queue_size=10)
 
     rospy.spin()
