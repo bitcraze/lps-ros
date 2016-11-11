@@ -4,15 +4,15 @@
 # range0..5, status
 import rospy
 from bitcraze_lps_estimator.msg import RangeArray
-from crazyflie_driver.msg import GenericLogData
+from std_msgs.msg import Float32MultiArray
 
 
 def callback(data):
     ranging = RangeArray()
 
-    ranging.ranges = data.values[:6]
+    ranging.ranges = data.data[:6]
 
-    state = int(data.values[6])
+    state = int(data.data[6])
     valid = [False] * 6
     for i in range(6):
         valid[i] = (state & (1 << i)) != 0
@@ -26,6 +26,6 @@ if __name__ == "__main__":
     ranging_pub = rospy.Publisher("ranging", RangeArray, queue_size=10)
 
     rospy.Subscriber(rospy.get_namespace()+"log_ranges",
-                     GenericLogData, callback)
+                     Float32MultiArray, callback)
 
     rospy.spin()
