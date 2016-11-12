@@ -62,7 +62,7 @@ if __name__ == "__main__":
     rospy.wait_for_service('update_params')
     update_params = rospy.ServiceProxy('update_params', UpdateParams)
 
-    enabled = rospy.get_param("anchor_pos.enable")
+    enabled = rospy.get_param("anchorpos/enable")
     if enabled == False:
         rospy.loginfo("Setting anchor position ...")
         n_anchors = rospy.get_param("n_anchors")
