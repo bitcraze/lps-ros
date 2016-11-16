@@ -14,7 +14,7 @@ def callback(data):
 if __name__ == "__main__":
     rospy.init_node('pos_zmq')
 
-    rospy.Subscriber("crazyflie_position", Point, callback)
+    rospy.Subscriber(rospy.get_namespace()+"position", Point, callback)
 
     context = zmq.Context()
     pos_socket = context.socket(zmq.PUSH)
