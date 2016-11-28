@@ -7,10 +7,9 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Point
 from crazyflie_driver.srv import UpdateParams
+from std_msgs.msg import Float32MultiArray
 
 import tf
-
-from crazyflie_driver.msg import GenericLogData
 
 ps = PoseStamped()
 ps.pose.orientation.w = 1
@@ -23,9 +22,9 @@ ps.pose.position.z = 0
 
 
 def callback_pos(data):
-    ps.pose.position.x = data.values[0]
-    ps.pose.position.y = data.values[1]
-    ps.pose.position.z = data.values[2]
+    ps.pose.position.x = data.data[0]
+    ps.pose.position.y = data.data[1]
+    ps.pose.position.z = data.data[2]
     ps.header.frame_id = "/world"
     ps.header.stamp = rospy.Time.now()
 
@@ -46,10 +45,10 @@ def callback_pos(data):
 
 
 def callback_qt(data):
-    ps.pose.orientation.w = data.values[0]
-    ps.pose.orientation.x = data.values[1]
-    ps.pose.orientation.y = data.values[2]
-    ps.pose.orientation.z = data.values[3]
+    ps.pose.orientation.w = data.data[0]
+    ps.pose.orientation.x = data.data[1]
+    ps.pose.orientation.y = data.data[2]
+    ps.pose.orientation.z = data.data[3]
 
 if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
@@ -63,20 +62,21 @@ if __name__ == "__main__":
     rospy.wait_for_service('update_params')
     update_params = rospy.ServiceProxy('update_params', UpdateParams)
 
-    rospy.loginfo("Setting anchor position ...")
+    enabled = rospy.get_param("anchorpos/enable")
+    if not enabled:
+        rospy.loginfo("Setting anchor position ...")
+        n_anchors = rospy.get_param("n_anchors")
+        for i in range(n_anchors):
+            position = rospy.get_param("anchor{}_pos".format(i))
+            rospy.loginfo("Anchor {} at {}".format(i, position))
+            name = "anchorpos/anchor{}".format(i)
+            rospy.set_param(name + "x", position[0])
+            rospy.set_param(name + "y", position[1])
+            rospy.set_param(name + "z", position[2])
+            update_params([name + 'x', name + 'y', name + 'z'])
 
-    n_anchors = rospy.get_param("n_anchors")
-    for i in range(n_anchors):
-        position = rospy.get_param("anchor{}_pos".format(i))
-        rospy.loginfo("Anchor {} at {}".format(i, position))
-        name = "anchorpos/anchor{}".format(i)
-        rospy.set_param(name + "x", position[0])
-        rospy.set_param(name + "y", position[1])
-        rospy.set_param(name + "z", position[2])
-        update_params([name + 'x', name + 'y', name + 'z'])
-
-    rospy.Subscriber("log_kfpos", GenericLogData, callback_pos)
-    rospy.Subscriber("log_kfqt", GenericLogData, callback_qt)
+    rospy.Subscriber("log_kfpos", Float32MultiArray, callback_pos)
+    rospy.Subscriber("log_kfqt", Float32MultiArray, callback_qt)
     if rospy.has_param("anchorpos/enable"):
         rospy.set_param("anchorpos/enable", 1)
         update_params(["anchorpos/enable"])
