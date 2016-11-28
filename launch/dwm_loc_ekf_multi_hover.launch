@@ -20,8 +20,6 @@
 
 
   <group ns="crazyflie0">
-    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
-
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
       <param name="uri" value="$(arg uri0)" />
       <param name="tf_prefix" value="crazyflie0" />
@@ -60,8 +58,6 @@
   </group>
 
   <group ns="crazyflie1">
-    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
-
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
       <param name="uri" value="$(arg uri1)" />
       <param name="tf_prefix" value="crazyflie1" />
