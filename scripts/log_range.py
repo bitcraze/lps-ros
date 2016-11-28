@@ -20,6 +20,7 @@ def pose_cb(data):
     last_pos = data
 
 def callback(data):
+    # Update the range array
     ranging = RangeArray()
 
     ranging.ranges = data.data[:6]
@@ -32,22 +33,24 @@ def callback(data):
 
     ranging_pub.publish(ranging)
 
+    # Create the ranging lines
     marker_array = MarkerArray()
     for i in range(6):
         marker = Marker()
         marker.header.frame_id = "/world"
-        marker.id = i+40
-        marker.type = 4
+        marker.id = i+40 # Pick arbirary id
+        marker.type = Marker.LINE_STRIP  # Use line marker type
         marker.lifetime = rospy.Duration(1.0)
         marker.ns = rospy.get_namespace()
         marker.action = 0
-        p = Point()
+        p = Point() # Start line at marker
         p.x = anchorpos[i][0]
         p.y = anchorpos[i][1]
         p.z = anchorpos[i][2]
         marker.points.append(p)
-        dir_vect = Vector3()
         global last_pos
+        # Create normalized direction vector
+        dir_vect = Vector3()
         dir_vect.x = last_pos.pose.position.x - anchorpos[i][0]
         dir_vect.y = last_pos.pose.position.y - anchorpos[i][1]
         dir_vect.z = last_pos.pose.position.z - anchorpos[i][2]
@@ -55,25 +58,15 @@ def callback(data):
         dir_vect.x /= mag
         dir_vect.y /= mag
         dir_vect.z /= mag
-        #print(ranging.ranges[i], anchorpos[i])
-        #marker.pose.position.x = ranging.ranges[i]*dir_vect.x + anchorpos[i][0]
-        #marker.pose.position.y = ranging.ranges[i]*dir_vect.y + anchorpos[i][1]
-        #marker.pose.position.z = ranging.ranges[i]*dir_vect.z + anchorpos[i][2]
-        #marker.pose.orientation.x = 0
-        #marker.pose.orientation.y = 0
-        #marker.pose.orientation.z = 0
-        #marker.pose.orientation.w = 1
+        # Apply range for the anchor to the direction vector
         dist = Point()
         dist.x = ranging.ranges[i]*dir_vect.x + anchorpos[i][0]
         dist.y = ranging.ranges[i]*dir_vect.y + anchorpos[i][1]
         dist.z = ranging.ranges[i]*dir_vect.z + anchorpos[i][2]
         marker.scale.x = 0.005
-        if '0' in marker.ns:
-            marker.color.r = 1
-        elif '1' in marker.ns:
-            marker.color.g = 1
-        elif '2' in marker.ns:
-            marker.color.b = 1
+        marker.color.r = rospy.get_param("red",   1)
+        marker.color.g = rospy.get_param("green", 0)
+        marker.color.b = rospy.get_param("blue",  0)
         marker.color.a = 0.5
         marker.points.append(dist)
         marker_array.markers.append(marker)
