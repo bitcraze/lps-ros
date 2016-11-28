@@ -15,9 +15,11 @@ import math
 anchorpos = []
 last_pos = PoseStamped()
 
+
 def pose_cb(data):
     global last_pos
     last_pos = data
+
 
 def callback(data):
     # Update the range array
@@ -38,17 +40,20 @@ def callback(data):
     for i in range(6):
         marker = Marker()
         marker.header.frame_id = "/world"
-        marker.id = i+40 # Pick arbirary id
-        marker.type = Marker.LINE_STRIP  # Use line marker type
+        marker.id = i+40
+        marker.type = Marker.LINE_STRIP
         marker.lifetime = rospy.Duration(1.0)
         marker.ns = rospy.get_namespace()
         marker.action = 0
-        p = Point() # Start line at marker
+
+        # Start line at marker
+        p = Point()
         p.x = anchorpos[i][0]
         p.y = anchorpos[i][1]
         p.z = anchorpos[i][2]
         marker.points.append(p)
         global last_pos
+
         # Create normalized direction vector
         dir_vect = Vector3()
         dir_vect.x = last_pos.pose.position.x - anchorpos[i][0]
@@ -58,6 +63,7 @@ def callback(data):
         dir_vect.x /= mag
         dir_vect.y /= mag
         dir_vect.z /= mag
+
         # Apply range for the anchor to the direction vector
         dist = Point()
         dist.x = ranging.ranges[i]*dir_vect.x + anchorpos[i][0]
@@ -84,10 +90,13 @@ if __name__ == "__main__":
 
     anchor_dict = get_anchors_pos()
     for name in anchor_dict:
-        anchorpos.append((anchor_dict[name][0], anchor_dict[name][1], anchor_dict[name][2]))
+        anchorpos.append((anchor_dict[name][0],
+                          anchor_dict[name][1],
+                          anchor_dict[name][2]))
 
     rospy.Subscriber("pose", PoseStamped, pose_cb)
 
-    range_paths = rospy.Publisher(rospy.get_namespace() + "range_paths", MarkerArray, queue_size=10)
+    range_paths = rospy.Publisher(rospy.get_namespace()+"range_paths",
+                                  MarkerArray, queue_size=10)
 
     rospy.spin()
