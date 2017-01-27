@@ -51,6 +51,7 @@ def callback_qt(data):
     ps.pose.orientation.y = data.values[2]
     ps.pose.orientation.z = data.values[3]
 
+
 if __name__ == "__main__":
     rospy.init_node('lps_ekf_bridge')
 

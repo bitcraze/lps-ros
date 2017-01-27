@@ -73,6 +73,7 @@ def publish_copter(publisher, pos):
 def callback(data):
     publish_copter(tag_pub, [data.x, data.y, data.z])
 
+
 if __name__ == "__main__":
     rospy.init_node("dwm_viz")
 

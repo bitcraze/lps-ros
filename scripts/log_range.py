@@ -20,6 +20,7 @@ def callback(data):
 
     ranging_pub.publish(ranging)
 
+
 if __name__ == "__main__":
     rospy.init_node('log_range')
 
