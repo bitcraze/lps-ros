@@ -7,8 +7,6 @@
   <arg name="y" default="2.3" />
   <arg name="z" default="1" />
 
-  <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
-
   <param name="robot_description" command="$(find xacro)/xacro.py $(find crazyflie_description)/urdf/crazyflie2.urdf.xacro" />
   <node name="rviz" pkg="rviz" type="rviz"
         args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_with_goal.rviz"/>
@@ -25,7 +23,7 @@
         genericLogTopicFrequencies: [30, 30, 30]
         genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
         genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
-        genericLogTopic_log_ranges_Variables: ["ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.distance6", "ranging.state"]
+        genericLogTopic_log_ranges_Variables: ["ranging.distance0", "ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.state"]
       </rosparam>
     </node>
 
@@ -50,6 +48,8 @@
     <node name="lps_efk_bridge" pkg="bitcraze_lps_estimator" type="lps_ekf_bridge.py" output="screen"/>
 
     <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+
+    <node name="log_range" pkg="bitcraze_lps_estimator" type="log_range.py" />
 
   </group>
 

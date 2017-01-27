@@ -20,7 +20,7 @@
       <rosparam>
         genericLogTopics: ["log_ranges"]
         genericLogTopicFrequencies: [30]
-        genericLogTopic_log_ranges_Variables: ["ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.distance6", "ranging.state"]
+        genericLogTopic_log_ranges_Variables: ["ranging.distance0", "ranging.distance1", "ranging.distance2", "ranging.distance3", "ranging.distance4", "ranging.distance5", "ranging.state"]
       </rosparam>
     </node>
 
