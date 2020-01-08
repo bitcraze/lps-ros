@@ -1,3 +1,12 @@
+# Obsolete project
+
+Nowadays the Crazyflie contains all LPS-related positioning algorithm onboard and the Crazyflie client is used to setup the LPS syste. Hence, this package is not required anymore.
+
+  - To setup an LPS system follow the getting [started guide](https://www.bitcraze.io/getting-started-with-the-loco-positioning-system/) using the Crazyflie client.
+  - For simple flight of up to a couple of Crazyflie you can directly use the [Crazyflie_ros](https://github.com/whoenig/crazyflie_ros) package.
+  - To fly complex trajectories of more Crazyflies, you can use the ros-based [Crazyswarm project](https://crazyswarm.readthedocs.io/en/latest/) by selecting [motion_capture_type to none](https://crazyswarm.readthedocs.io/en/latest/usage.html#select-motion-capture-system)
+
+
 # Bitcraze UWB LPS position estimator ROS package [![Build Status](https://api.travis-ci.org/bitcraze/lps-ros.svg)](https://travis-ci.org/bitcraze/lps-ros)
 
 This ROS package contains the Particle filter, launch files and bridges used
