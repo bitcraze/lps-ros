@@ -26,7 +26,7 @@ last_estimate = np.array([0, 0, 0])
 
 
 def func(p, data):
-    """Here we compute our cost function: 1/2 * \sum_i (||x_i - p|| - d_i)^2,
+    """Here we compute our cost function: 1/2 * sum_i (||x_i - p|| - d_i)^2,
     i.e. the sum of the difference between anchors Crazyflie
     """
     result = 0
