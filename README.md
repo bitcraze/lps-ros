@@ -7,8 +7,7 @@ Nowadays the Crazyflie contains all LPS-related positioning algorithm onboard an
   - To fly complex trajectories of more Crazyflies, you can use the ros-based [Crazyswarm project](https://crazyswarm.readthedocs.io/en/latest/) by selecting [motion_capture_type to none](https://crazyswarm.readthedocs.io/en/latest/usage.html#select-motion-capture-system)
 
 
-# Bitcraze UWB LPS position estimator ROS package [![Build Status](https://api.travis-ci.org/bitcraze/lps-ros.svg)](https://travis-ci.org/bitcraze/lps-ros)
-
+# Bitcraze UWB LPS position estimator ROS package [![CI](https://github.com/bitcraze/lps-ros/workflows/CI/badge.svg)](https://github.com/bitcraze/lps-ros/actions?query=workflow%3ACI)
 This ROS package contains the Particle filter, launch files and bridges used
 to estimate the Bitcraze Crazyflie 2.0 position with using the LPS UWB ranging
 deck and LPS nodes.
