@@ -20,3 +20,6 @@ More information can be found on the
 To use the particle filter and the visualisation node, the anchor position needs
 to be set up in the ROS parameter server. The launcher files will load the
 anchor position from data/anchor_pos.yaml. See data/anchor_pos.yaml.sample.
+
+## Contribute
+Go to the [contribute page](https://www.bitcraze.io/contribute/) on our website to learn more.
